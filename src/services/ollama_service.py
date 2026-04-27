@@ -308,7 +308,7 @@ class OllamaService(ILLMService):
             if max_tokens:
                 payload["options"]["num_predict"] = max_tokens
 
-            self._logger.debug(f"Gerando resposta para: {prompt[:60]}...")
+            self._logger.info(f"Chamando Ollama [{model_name}]...")
 
             response = requests.post(url, json=payload, timeout=180)
 

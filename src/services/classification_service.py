@@ -54,7 +54,7 @@ class ClassificationService:
             RuntimeError: Se houver falha na comunicação com Ollama
         """
         full_prompt = self._build_prompt(text, prompt_template)
-        self._logger.debug(f"Classificando texto ({len(text)} chars): {text[:60]}...")
+        self._logger.info(f"Classificando texto ({len(text)} chars) com modelo '{model_name}'...")
 
         result = self._llm.generate(
             prompt=full_prompt,
@@ -82,7 +82,7 @@ class ClassificationService:
             dict com 'classification' (str) e 'metadata' (dict).
         """
         full_prompt = self._build_prompt(text, prompt_template)
-        self._logger.debug(f"Classificando com metadata ({len(text)} chars): {text[:60]}...")
+        self._logger.info(f"Classificando texto ({len(text)} chars) com modelo '{model_name}'...")
 
         if hasattr(self._llm, "generate_with_metadata"):
             raw = self._llm.generate_with_metadata(

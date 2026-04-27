@@ -47,6 +47,10 @@ if ! lsof -ti tcp:8000 &>/dev/null; then
 fi
 echo "✅ API      → http://localhost:8000  (docs: /docs)"
 
+# Exibe logs da API em tempo real no terminal
+tail -f "$DIR/logs/api.log" &
+echo $! >> "$PIDS"
+
 # ── Streamlit ─────────────────────────────────────────────────────────────────
 cd "$DIR"
 streamlit run streamlit_app.py \

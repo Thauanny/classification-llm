@@ -88,53 +88,6 @@ class ILLMService(ABC):
         pass
 
 
-class IChatService(ABC):
-    """
-    Interface abstrata para serviços de chat.
-    Segue o princípio de Interface Segregation (SOLID).
-    """
-
-    @abstractmethod
-    def start_conversation(self, system_prompt: Optional[str] = None) -> str:
-        """
-        Inicia uma nova conversa.
-        
-        Args:
-            system_prompt: Prompt de sistema opcional
-            
-        Returns:
-            str: ID da conversa
-        """
-        pass
-
-    @abstractmethod
-    def send_message(self, conversation_id: str, message: str) -> str:
-        """
-        Envia uma mensagem na conversa.
-        
-        Args:
-            conversation_id: ID da conversa
-            message: Mensagem do usuário
-            
-        Returns:
-            str: Resposta do modelo
-        """
-        pass
-
-    @abstractmethod
-    def get_history(self, conversation_id: str) -> List[Dict[str, str]]:
-        """
-        Obtém o histórico de uma conversa.
-        
-        Args:
-            conversation_id: ID da conversa
-            
-        Returns:
-            List[Dict]: Histórico de mensagens
-        """
-        pass
-
-
 class ILogger(ABC):
     """
     Interface abstrata para logging.
