@@ -4,7 +4,7 @@ Define contratos de request/response (Single Responsibility).
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Any, Dict, Optional, List
 
 
 class OllamaParams(BaseModel):
@@ -71,6 +71,7 @@ class ClassifyTextResponse(BaseModel):
     classification: str
     model_name: str
     prompt_template: str
+    metadata: Optional[Dict[str, Any]] = None
 
 
 class ClassifyResult(BaseModel):
@@ -111,3 +112,33 @@ class HealthResponse(BaseModel):
     ollama_connected: bool
     models_count: int
     message: str
+
+
+# ── Groq ──────────────────────────────────────────────────────────────────────
+
+class GroqParams(BaseModel):
+    """Parâmetros suportados pela API Groq."""
+
+    temperature: float = Field(0.7, ge=0.0, le=2.0)
+    top_p: float = Field(0.9, ge=0.0, le=1.0)
+    max_tokens: Optional[int] = Field(None, gt=0, description="None = ilimitado.")
+
+
+class GroqClassifyTextRequest(BaseModel):
+    """Request para classificação via Groq."""
+
+    text: str = Field(..., min_length=1)
+    prompt_template: str = Field(..., min_length=1)
+    model_name: str = Field("llama-3.3-70b-versatile")
+    api_key: str = Field(..., description="Chave de API Groq.")
+    params: GroqParams = Field(default_factory=GroqParams)
+
+
+class GroqClassifyTextResponse(BaseModel):
+    """Response da classificação via Groq."""
+
+    text: str
+    classification: str
+    model_name: str
+    prompt_template: str
+    metadata: Optional[Dict[str, Any]] = None

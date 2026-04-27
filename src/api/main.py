@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from ..models.api_models import HealthResponse
 from .dependencies import get_ollama_service
 from .routes import classify, models
+from .routes import groq_classify
 from ..services.ollama_service import OllamaService
 
 app = FastAPI(
@@ -33,6 +34,7 @@ app.add_middleware(
 
 app.include_router(classify.router)
 app.include_router(models.router)
+app.include_router(groq_classify.router)
 
 
 @app.get(

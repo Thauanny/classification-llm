@@ -322,6 +322,93 @@ class OllamaService(ILLMService):
             self._logger.error(f"Erro na requisição ao Ollama: {e}")
             raise RuntimeError(f"Falha na comunicação com Ollama: {e}") from e
 
+    def generate_with_metadata(
+        self,
+        prompt: str,
+        model_name: str,
+        temperature: float = 0.7,
+        max_tokens: Optional[int] = None,
+        top_p: float = 0.9,
+        top_k: int = 40,
+        repeat_penalty: float = 1.1,
+    ) -> Dict:
+        """
+        Igual a generate() mas retorna também os metadados completos da resposta Ollama.
+
+        Returns:
+            dict com chaves 'text' (str) e 'metadata' (dict) contendo tokens, durations, etc.
+        """
+        if not self.is_model_available(model_name):
+            raise ValueError(f"Modelo '{model_name}' não está disponível localmente.")
+
+        url = f"{self._api_url}/generate"
+        payload: Dict = {
+            "model": model_name,
+            "prompt": prompt,
+            "stream": False,
+            "options": {
+                "temperature": temperature,
+                "top_p": top_p,
+                "top_k": top_k,
+                "repeat_penalty": repeat_penalty,
+            },
+        }
+        if max_tokens:
+            payload["options"]["num_predict"] = max_tokens
+
+        try:
+            response = requests.post(url, json=payload, timeout=180)
+            if response.status_code != 200:
+                raise RuntimeError(
+                    f"Ollama retornou status {response.status_code}: {response.text}"
+                )
+            data = response.json()
+        except requests.exceptions.RequestException as exc:
+            raise RuntimeError(f"Falha na comunicação com Ollama: {exc}") from exc
+
+        text = data.get("response", "").strip()
+
+        _ns = 1_000_000_000
+        prompt_tokens = data.get("prompt_eval_count")
+        completion_tokens = data.get("eval_count")
+        eval_dur = data.get("eval_duration")
+
+        metadata: Dict = {
+            "model": data.get("model"),
+            "created_at": data.get("created_at"),
+            "done_reason": data.get("done_reason"),
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "total_tokens": (
+                (prompt_tokens or 0) + (completion_tokens or 0)
+            ) or None,
+            "total_duration_s": (
+                round(data["total_duration"] / _ns, 3)
+                if data.get("total_duration")
+                else None
+            ),
+            "load_duration_s": (
+                round(data["load_duration"] / _ns, 3)
+                if data.get("load_duration")
+                else None
+            ),
+            "prompt_eval_duration_s": (
+                round(data["prompt_eval_duration"] / _ns, 3)
+                if data.get("prompt_eval_duration")
+                else None
+            ),
+            "eval_duration_s": (
+                round(eval_dur / _ns, 3) if eval_dur else None
+            ),
+        }
+
+        if completion_tokens and metadata["eval_duration_s"] and metadata["eval_duration_s"] > 0:
+            metadata["tokens_per_second"] = round(
+                completion_tokens / metadata["eval_duration_s"], 1
+            )
+
+        return {"text": text, "metadata": metadata}
+
     @staticmethod
     def _format_size(size_bytes: int) -> str:
         """

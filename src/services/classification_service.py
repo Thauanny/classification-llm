@@ -68,6 +68,46 @@ class ClassificationService:
 
         return result.strip()
 
+    def classify_text_with_metadata(
+        self,
+        text: str,
+        prompt_template: str,
+        model_name: str,
+        params: OllamaParams,
+    ) -> dict:
+        """
+        Classifica um texto e retorna classificação + metadados completos da LLM.
+
+        Returns:
+            dict com 'classification' (str) e 'metadata' (dict).
+        """
+        full_prompt = self._build_prompt(text, prompt_template)
+        self._logger.debug(f"Classificando com metadata ({len(text)} chars): {text[:60]}...")
+
+        if hasattr(self._llm, "generate_with_metadata"):
+            raw = self._llm.generate_with_metadata(
+                prompt=full_prompt,
+                model_name=model_name,
+                temperature=params.temperature,
+                max_tokens=params.max_tokens,
+                top_p=params.top_p,
+                top_k=getattr(params, "top_k", 40),
+                repeat_penalty=getattr(params, "repeat_penalty", 1.1),
+            )
+            return {"classification": raw["text"].strip(), "metadata": raw.get("metadata", {})}
+
+        # fallback: serviço sem generate_with_metadata
+        result = self._llm.generate(
+            prompt=full_prompt,
+            model_name=model_name,
+            temperature=params.temperature,
+            max_tokens=params.max_tokens,
+            top_p=params.top_p,
+            top_k=getattr(params, "top_k", 40),
+            repeat_penalty=getattr(params, "repeat_penalty", 1.1),
+        )
+        return {"classification": result.strip(), "metadata": {}}
+
     def classify_texts(
         self,
         texts: List[str],

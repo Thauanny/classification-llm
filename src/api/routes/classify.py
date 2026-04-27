@@ -68,7 +68,7 @@ def classify_text(
     _validate_model(request.model_name, ollama)
 
     try:
-        classification = service.classify_text(
+        result = service.classify_text_with_metadata(
             text=request.text,
             prompt_template=request.prompt_template,
             model_name=request.model_name,
@@ -82,9 +82,10 @@ def classify_text(
 
     return ClassifyTextResponse(
         text=request.text,
-        classification=classification,
+        classification=result["classification"],
         model_name=request.model_name,
         prompt_template=request.prompt_template,
+        metadata=result.get("metadata"),
     )
 
 
