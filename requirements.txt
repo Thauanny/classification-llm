@@ -1,0 +1,18 @@
+# ── HTTP / API ──────────────────────────────────────────────────────────────
+requests>=2.31.0           # cliente HTTP (Streamlit → FastAPI, FastAPI → Ollama)
+
+# ── FastAPI ──────────────────────────────────────────────────────────────────
+fastapi>=0.111.0           # framework da API REST
+uvicorn[standard]>=0.29.0  # servidor ASGI
+python-multipart>=0.0.9    # suporte a Form + UploadFile no FastAPI
+
+# ── Streamlit ────────────────────────────────────────────────────────────────
+streamlit>=1.35.0          # interface gráfica web
+
+# ── Data ─────────────────────────────────────────────────────────────────────
+pandas>=2.2.0              # manipulação de datasets
+openpyxl>=3.1.0            # leitura/escrita de arquivos Excel (.xlsx)
+xlrd>=2.0.0                # leitura de arquivos Excel legados (.xls)
+
+# ── Tipagem ──────────────────────────────────────────────────────────────────
+typing-extensions>=4.8.0   # type hints extras (retrocompatibilidade)
