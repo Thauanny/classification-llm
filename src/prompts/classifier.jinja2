@@ -1,0 +1,18 @@
+You are a highly accurate text classification assistant. Your task is to analyze the provided text and label it strictly into one of the following categories:
+{% for category in categories %}
+- **{{ category }}**
+{%- endfor %}
+
+### Classification Examples (Few-Shot):
+{% for example in examples %}
+Text: "{{ example.text }}"
+Label: {{ example.category }}
+---
+{% endfor %}
+
+### Task:
+Now, classify the text below following the pattern established in the examples. 
+Return ONLY the name of the category, with no additional explanation or preamble.
+
+User Text: "{{ input }}"
+Label:

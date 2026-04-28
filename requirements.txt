@@ -16,3 +16,6 @@ xlrd>=2.0.0                # leitura de arquivos Excel legados (.xls)
 
 # ── Tipagem ──────────────────────────────────────────────────────────────────
 typing-extensions>=4.8.0   # type hints extras (retrocompatibilidade)
+
+# ── Prompts ────────────────────────────────────────────────────────────────
+jinja2>=3.1.6
