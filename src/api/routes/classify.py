@@ -15,9 +15,10 @@ from ...models.api_models import (
     ClassifyTextResponse,
     OllamaParams,
 )
+from ...interfaces.llm_interface import ILogger
 from ...services.classification_service import ClassificationService
 from ...services.ollama_service import OllamaService
-from ..dependencies import get_classification_service, get_ollama_service
+from ..dependencies import get_classification_service, get_logger, get_ollama_service
 
 router = APIRouter(prefix="/classify", tags=["Classificação"])
 
@@ -64,6 +65,7 @@ def classify_text(
     request: ClassifyTextRequest,
     service: ClassificationService = Depends(get_classification_service),
     ollama: OllamaService = Depends(get_ollama_service),
+    logger: ILogger = Depends(get_logger),
 ) -> ClassifyTextResponse:
     _validate_model(request.model_name, ollama)
 
@@ -75,6 +77,7 @@ def classify_text(
             params=request.params,
         )
     except (ValueError, RuntimeError) as exc:
+        logger.error(f"Erro ao classificar texto com modelo '{request.model_name}': {exc}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(exc),

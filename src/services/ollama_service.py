@@ -292,10 +292,10 @@ class OllamaService(ILLMService):
             raise ValueError(f"Modelo '{model_name}' não está disponível localmente.")
 
         try:
-            url = f"{self._api_url}/generate"
+            url = f"{self._api_url}/chat"
             payload = {
                 "model": model_name,
-                "prompt": prompt,
+                "messages": [{"role": "user", "content": prompt}],
                 "stream": False,
                 "options": {
                     "temperature": temperature,
@@ -316,7 +316,7 @@ class OllamaService(ILLMService):
                 raise RuntimeError(f"Ollama retornou status {response.status_code}: {response.text}")
 
             data = response.json()
-            return data.get("response", "").strip()
+            return data.get("message", {}).get("content", "").strip()
 
         except requests.exceptions.RequestException as e:
             self._logger.error(f"Erro na requisição ao Ollama: {e}")
@@ -341,10 +341,10 @@ class OllamaService(ILLMService):
         if not self.is_model_available(model_name):
             raise ValueError(f"Modelo '{model_name}' não está disponível localmente.")
 
-        url = f"{self._api_url}/generate"
+        url = f"{self._api_url}/chat"
         payload: Dict = {
             "model": model_name,
-            "prompt": prompt,
+            "messages": [{"role": "user", "content": prompt}],
             "stream": False,
             "options": {
                 "temperature": temperature,
@@ -366,7 +366,7 @@ class OllamaService(ILLMService):
         except requests.exceptions.RequestException as exc:
             raise RuntimeError(f"Falha na comunicação com Ollama: {exc}") from exc
 
-        text = data.get("response", "").strip()
+        text = data.get("message", {}).get("content", "").strip()
 
         _ns = 1_000_000_000
         prompt_tokens = data.get("prompt_eval_count")

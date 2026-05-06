@@ -240,6 +240,7 @@ with st.sidebar:
             "llama3.2:3b",
             "llama3.2:1b",
             "llama3.1:8b",
+            "llama3.1:8b-instruct-q4_K_M",
             "llama3.1:8b-instruct-q8_0",
             "mistral:7b",
             "mistral:7b-instruct",
@@ -700,7 +701,7 @@ with tab_dataset:
                     + (f" | ❌ {errors_r} erro(s)" if errors_r > 0 else "")
                 )
 
-                non_error = result_df[~result_df["Classificação"].str.startswith("ERRO:")]
+                non_error = result_df[~result_df["Classificação"].str.startswith("ERRO:").astype(bool)]
                 if not non_error.empty:
                     with st.expander("📊 Distribuição das classificações"):
                         counts = non_error["Classificação"].value_counts().reset_index()
