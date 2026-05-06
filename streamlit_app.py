@@ -242,6 +242,7 @@ with st.sidebar:
             "llama3.1:8b",
             "llama3.1:8b-instruct-q4_K_M",
             "llama3.1:8b-instruct-q8_0",
+            "llama3.1:8b-instruct-fp16",
             "mistral:7b",
             "mistral:7b-instruct",
             "phi3:mini",
