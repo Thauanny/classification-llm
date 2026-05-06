@@ -7,6 +7,14 @@ Classifica textos e datasets via LLM local (Ollama) usando FastAPI + Streamlit.
 - Python 3.11 → `brew install python@3.11`
 - Ollama → `brew install ollama`
 
+## Configuração do ambiente
+
+```bash
+python3.11 -m venv .venv          # cria o ambiente virtual
+source .venv/bin/activate         # ativa (Mac/Linux)
+pip install -r requirements.txt   # instala as dependências
+```
+
 ## Rodar
 
 ```bash
@@ -14,7 +22,7 @@ Classifica textos e datasets via LLM local (Ollama) usando FastAPI + Streamlit.
 ./run_app.sh --stop   # encerra tudo
 ```
 
-Na primeira execução cria o `.venv` e instala as dependências automaticamente.
+O `run_app.sh` cria o `.venv` e instala as dependências automaticamente na primeira execução.
 
 | Serviço | URL |
 |---|---|
